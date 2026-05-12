@@ -1,0 +1,3 @@
+C:/Users/Hermes/Desktop/Agriconnect/cpp-backend/build/CMakeFiles/agriconnect_backend.dir
+C:/Users/Hermes/Desktop/Agriconnect/cpp-backend/build/CMakeFiles/edit_cache.dir
+C:/Users/Hermes/Desktop/Agriconnect/cpp-backend/build/CMakeFiles/rebuild_cache.dir
