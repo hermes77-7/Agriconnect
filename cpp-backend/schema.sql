@@ -115,3 +115,5 @@ ALTER TABLE listings
 ALTER TABLE orders RENAME COLUMN wholesaler_id TO buyer_id;
 
 ALTER TYPE order_status_enum ADD VALUE 'Cancelled';
+
+-- push test
