@@ -1,27 +1,45 @@
 import { create } from "zustand";
-
-export interface ProduceItem {
-  id: string;
-  name: string;
-  farmer: string;
-  region: string;
-  quantity: number;
-  unit: string;
-  price: number;
-  image: string;
-}
+import { Listing, FilterParams } from "../types/produce";
+import { listingService } from "../services/api/listingService";
 
 interface MarketplaceStore {
-  produce: ProduceItem[];
+  listings: Listing[];
+  isLoading: boolean;
+  error: string | null;
+  filters: FilterParams;
 
-  setProduce: (items: ProduceItem[]) => void;
+  fetchListings: (filters?: FilterParams) => Promise<void>;
+  setFilters: (filters: FilterParams) => void;
+  clearFilters: () => void;
 }
 
-export const useMarketplaceStore = create<MarketplaceStore>((set) => ({
-  produce: [],
+export const useMarketplaceStore = create<MarketplaceStore>((set, get) => ({
+  listings: [],
+  isLoading: false,
+  error: null,
+  filters: {},
 
-  setProduce: (items) =>
-    set({
-      produce: items,
-    }),
+  fetchListings: async (filters?: FilterParams) => {
+    set({ isLoading: true, error: null });
+    try {
+      const activeFilters = filters ?? get().filters;
+      const listings = await listingService.getAll(activeFilters);
+      set({ listings, isLoading: false });
+    } catch (e: any) {
+      set({
+        error: e.response?.data?.error || "Failed to load listings",
+        isLoading: false,
+      });
+    }
+  },
+
+  setFilters: (filters) => {
+    set({ filters });
+    get().fetchListings(filters);
+  },
+
+  clearFilters: () => {
+    set({ filters: {} });
+    get().fetchListings({});
+  },
 }));

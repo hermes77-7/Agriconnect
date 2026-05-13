@@ -1,5 +1,4 @@
 cmake_minimum_required(VERSION 3.15)
-
 project(AgriconnectBackend)
 
 set(CMAKE_CXX_STANDARD 17)
@@ -9,12 +8,20 @@ find_package(PostgreSQL REQUIRED)
 
 include_directories(
     external
+    src
     ${PostgreSQL_INCLUDE_DIRS}
+    "C:/msys64/mingw64/include"
+)
+
+link_directories(
+    "C:/msys64/mingw64/lib"
 )
 
 add_executable(agriconnect_backend
     src/main.cpp
     src/db/Database.cpp
+    src/utils/Password.cpp
+    src/utils/JwtUtil.cpp
 )
 
 target_compile_definitions(agriconnect_backend PRIVATE
@@ -26,4 +33,6 @@ target_compile_definitions(agriconnect_backend PRIVATE
 target_link_libraries(agriconnect_backend PRIVATE
     ws2_32
     ${PostgreSQL_LIBRARIES}
+    ssl
+    crypto
 )

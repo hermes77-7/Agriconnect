@@ -84,12 +84,12 @@ clean: CMakeFiles/agriconnect_backend.dir/clean
 CMakeFiles/agriconnect_backend.dir/all:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\agriconnect_backend.dir\build.make CMakeFiles/agriconnect_backend.dir/depend
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\agriconnect_backend.dir\build.make CMakeFiles/agriconnect_backend.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=C:\Users\Hermes\Desktop\Agriconnect\cpp-backend\build\CMakeFiles --progress-num=1,2,3 "Built target agriconnect_backend"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=C:\Users\Hermes\Desktop\Agriconnect\cpp-backend\build\CMakeFiles --progress-num=1,2,3,4,5 "Built target agriconnect_backend"
 .PHONY : CMakeFiles/agriconnect_backend.dir/all
 
 # Build rule for subdir invocation for target.
 CMakeFiles/agriconnect_backend.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start C:\Users\Hermes\Desktop\Agriconnect\cpp-backend\build\CMakeFiles 3
+	$(CMAKE_COMMAND) -E cmake_progress_start C:\Users\Hermes\Desktop\Agriconnect\cpp-backend\build\CMakeFiles 5
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\Makefile2 CMakeFiles/agriconnect_backend.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start C:\Users\Hermes\Desktop\Agriconnect\cpp-backend\build\CMakeFiles 0
 .PHONY : CMakeFiles/agriconnect_backend.dir/rule
@@ -101,7 +101,7 @@ agriconnect_backend: CMakeFiles/agriconnect_backend.dir/rule
 # codegen rule for target.
 CMakeFiles/agriconnect_backend.dir/codegen:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\agriconnect_backend.dir\build.make CMakeFiles/agriconnect_backend.dir/codegen
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=C:\Users\Hermes\Desktop\Agriconnect\cpp-backend\build\CMakeFiles --progress-num=1,2,3 "Finished codegen for target agriconnect_backend"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=C:\Users\Hermes\Desktop\Agriconnect\cpp-backend\build\CMakeFiles --progress-num=1,2,3,4,5 "Finished codegen for target agriconnect_backend"
 .PHONY : CMakeFiles/agriconnect_backend.dir/codegen
 
 # clean rule for target.

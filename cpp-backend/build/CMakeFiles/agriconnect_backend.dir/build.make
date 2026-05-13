@@ -76,47 +76,81 @@ CMakeFiles/agriconnect_backend.dir/src/main.cpp.obj: CMakeFiles/agriconnect_back
 CMakeFiles/agriconnect_backend.dir/src/main.cpp.obj: C:/Users/Hermes/Desktop/Agriconnect/cpp-backend/src/main.cpp
 CMakeFiles/agriconnect_backend.dir/src/main.cpp.obj: CMakeFiles/agriconnect_backend.dir/compiler_depend.ts
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=C:\Users\Hermes\Desktop\Agriconnect\cpp-backend\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/agriconnect_backend.dir/src/main.cpp.obj"
-	C:\msys64\mingw64\bin\c++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/agriconnect_backend.dir/src/main.cpp.obj -MF CMakeFiles\agriconnect_backend.dir\src\main.cpp.obj.d -o CMakeFiles\agriconnect_backend.dir\src\main.cpp.obj -c C:\Users\Hermes\Desktop\Agriconnect\cpp-backend\src\main.cpp
+	C:\msys64\mingw64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/agriconnect_backend.dir/src/main.cpp.obj -MF CMakeFiles\agriconnect_backend.dir\src\main.cpp.obj.d -o CMakeFiles\agriconnect_backend.dir\src\main.cpp.obj -c C:\Users\Hermes\Desktop\Agriconnect\cpp-backend\src\main.cpp
 
 CMakeFiles/agriconnect_backend.dir/src/main.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/agriconnect_backend.dir/src/main.cpp.i"
-	C:\msys64\mingw64\bin\c++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E C:\Users\Hermes\Desktop\Agriconnect\cpp-backend\src\main.cpp > CMakeFiles\agriconnect_backend.dir\src\main.cpp.i
+	C:\msys64\mingw64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E C:\Users\Hermes\Desktop\Agriconnect\cpp-backend\src\main.cpp > CMakeFiles\agriconnect_backend.dir\src\main.cpp.i
 
 CMakeFiles/agriconnect_backend.dir/src/main.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/agriconnect_backend.dir/src/main.cpp.s"
-	C:\msys64\mingw64\bin\c++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S C:\Users\Hermes\Desktop\Agriconnect\cpp-backend\src\main.cpp -o CMakeFiles\agriconnect_backend.dir\src\main.cpp.s
+	C:\msys64\mingw64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S C:\Users\Hermes\Desktop\Agriconnect\cpp-backend\src\main.cpp -o CMakeFiles\agriconnect_backend.dir\src\main.cpp.s
 
 CMakeFiles/agriconnect_backend.dir/src/db/Database.cpp.obj: CMakeFiles/agriconnect_backend.dir/flags.make
 CMakeFiles/agriconnect_backend.dir/src/db/Database.cpp.obj: CMakeFiles/agriconnect_backend.dir/includes_CXX.rsp
 CMakeFiles/agriconnect_backend.dir/src/db/Database.cpp.obj: C:/Users/Hermes/Desktop/Agriconnect/cpp-backend/src/db/Database.cpp
 CMakeFiles/agriconnect_backend.dir/src/db/Database.cpp.obj: CMakeFiles/agriconnect_backend.dir/compiler_depend.ts
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=C:\Users\Hermes\Desktop\Agriconnect\cpp-backend\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/agriconnect_backend.dir/src/db/Database.cpp.obj"
-	C:\msys64\mingw64\bin\c++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/agriconnect_backend.dir/src/db/Database.cpp.obj -MF CMakeFiles\agriconnect_backend.dir\src\db\Database.cpp.obj.d -o CMakeFiles\agriconnect_backend.dir\src\db\Database.cpp.obj -c C:\Users\Hermes\Desktop\Agriconnect\cpp-backend\src\db\Database.cpp
+	C:\msys64\mingw64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/agriconnect_backend.dir/src/db/Database.cpp.obj -MF CMakeFiles\agriconnect_backend.dir\src\db\Database.cpp.obj.d -o CMakeFiles\agriconnect_backend.dir\src\db\Database.cpp.obj -c C:\Users\Hermes\Desktop\Agriconnect\cpp-backend\src\db\Database.cpp
 
 CMakeFiles/agriconnect_backend.dir/src/db/Database.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/agriconnect_backend.dir/src/db/Database.cpp.i"
-	C:\msys64\mingw64\bin\c++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E C:\Users\Hermes\Desktop\Agriconnect\cpp-backend\src\db\Database.cpp > CMakeFiles\agriconnect_backend.dir\src\db\Database.cpp.i
+	C:\msys64\mingw64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E C:\Users\Hermes\Desktop\Agriconnect\cpp-backend\src\db\Database.cpp > CMakeFiles\agriconnect_backend.dir\src\db\Database.cpp.i
 
 CMakeFiles/agriconnect_backend.dir/src/db/Database.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/agriconnect_backend.dir/src/db/Database.cpp.s"
-	C:\msys64\mingw64\bin\c++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S C:\Users\Hermes\Desktop\Agriconnect\cpp-backend\src\db\Database.cpp -o CMakeFiles\agriconnect_backend.dir\src\db\Database.cpp.s
+	C:\msys64\mingw64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S C:\Users\Hermes\Desktop\Agriconnect\cpp-backend\src\db\Database.cpp -o CMakeFiles\agriconnect_backend.dir\src\db\Database.cpp.s
+
+CMakeFiles/agriconnect_backend.dir/src/utils/Password.cpp.obj: CMakeFiles/agriconnect_backend.dir/flags.make
+CMakeFiles/agriconnect_backend.dir/src/utils/Password.cpp.obj: CMakeFiles/agriconnect_backend.dir/includes_CXX.rsp
+CMakeFiles/agriconnect_backend.dir/src/utils/Password.cpp.obj: C:/Users/Hermes/Desktop/Agriconnect/cpp-backend/src/utils/Password.cpp
+CMakeFiles/agriconnect_backend.dir/src/utils/Password.cpp.obj: CMakeFiles/agriconnect_backend.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=C:\Users\Hermes\Desktop\Agriconnect\cpp-backend\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/agriconnect_backend.dir/src/utils/Password.cpp.obj"
+	C:\msys64\mingw64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/agriconnect_backend.dir/src/utils/Password.cpp.obj -MF CMakeFiles\agriconnect_backend.dir\src\utils\Password.cpp.obj.d -o CMakeFiles\agriconnect_backend.dir\src\utils\Password.cpp.obj -c C:\Users\Hermes\Desktop\Agriconnect\cpp-backend\src\utils\Password.cpp
+
+CMakeFiles/agriconnect_backend.dir/src/utils/Password.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/agriconnect_backend.dir/src/utils/Password.cpp.i"
+	C:\msys64\mingw64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E C:\Users\Hermes\Desktop\Agriconnect\cpp-backend\src\utils\Password.cpp > CMakeFiles\agriconnect_backend.dir\src\utils\Password.cpp.i
+
+CMakeFiles/agriconnect_backend.dir/src/utils/Password.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/agriconnect_backend.dir/src/utils/Password.cpp.s"
+	C:\msys64\mingw64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S C:\Users\Hermes\Desktop\Agriconnect\cpp-backend\src\utils\Password.cpp -o CMakeFiles\agriconnect_backend.dir\src\utils\Password.cpp.s
+
+CMakeFiles/agriconnect_backend.dir/src/utils/JwtUtil.cpp.obj: CMakeFiles/agriconnect_backend.dir/flags.make
+CMakeFiles/agriconnect_backend.dir/src/utils/JwtUtil.cpp.obj: CMakeFiles/agriconnect_backend.dir/includes_CXX.rsp
+CMakeFiles/agriconnect_backend.dir/src/utils/JwtUtil.cpp.obj: C:/Users/Hermes/Desktop/Agriconnect/cpp-backend/src/utils/JwtUtil.cpp
+CMakeFiles/agriconnect_backend.dir/src/utils/JwtUtil.cpp.obj: CMakeFiles/agriconnect_backend.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=C:\Users\Hermes\Desktop\Agriconnect\cpp-backend\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/agriconnect_backend.dir/src/utils/JwtUtil.cpp.obj"
+	C:\msys64\mingw64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/agriconnect_backend.dir/src/utils/JwtUtil.cpp.obj -MF CMakeFiles\agriconnect_backend.dir\src\utils\JwtUtil.cpp.obj.d -o CMakeFiles\agriconnect_backend.dir\src\utils\JwtUtil.cpp.obj -c C:\Users\Hermes\Desktop\Agriconnect\cpp-backend\src\utils\JwtUtil.cpp
+
+CMakeFiles/agriconnect_backend.dir/src/utils/JwtUtil.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/agriconnect_backend.dir/src/utils/JwtUtil.cpp.i"
+	C:\msys64\mingw64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E C:\Users\Hermes\Desktop\Agriconnect\cpp-backend\src\utils\JwtUtil.cpp > CMakeFiles\agriconnect_backend.dir\src\utils\JwtUtil.cpp.i
+
+CMakeFiles/agriconnect_backend.dir/src/utils/JwtUtil.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/agriconnect_backend.dir/src/utils/JwtUtil.cpp.s"
+	C:\msys64\mingw64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S C:\Users\Hermes\Desktop\Agriconnect\cpp-backend\src\utils\JwtUtil.cpp -o CMakeFiles\agriconnect_backend.dir\src\utils\JwtUtil.cpp.s
 
 # Object files for target agriconnect_backend
 agriconnect_backend_OBJECTS = \
 "CMakeFiles/agriconnect_backend.dir/src/main.cpp.obj" \
-"CMakeFiles/agriconnect_backend.dir/src/db/Database.cpp.obj"
+"CMakeFiles/agriconnect_backend.dir/src/db/Database.cpp.obj" \
+"CMakeFiles/agriconnect_backend.dir/src/utils/Password.cpp.obj" \
+"CMakeFiles/agriconnect_backend.dir/src/utils/JwtUtil.cpp.obj"
 
 # External object files for target agriconnect_backend
 agriconnect_backend_EXTERNAL_OBJECTS =
 
 agriconnect_backend.exe: CMakeFiles/agriconnect_backend.dir/src/main.cpp.obj
 agriconnect_backend.exe: CMakeFiles/agriconnect_backend.dir/src/db/Database.cpp.obj
+agriconnect_backend.exe: CMakeFiles/agriconnect_backend.dir/src/utils/Password.cpp.obj
+agriconnect_backend.exe: CMakeFiles/agriconnect_backend.dir/src/utils/JwtUtil.cpp.obj
 agriconnect_backend.exe: CMakeFiles/agriconnect_backend.dir/build.make
 agriconnect_backend.exe: C:/msys64/mingw64/lib/libpq.dll.a
 agriconnect_backend.exe: CMakeFiles/agriconnect_backend.dir/linkLibs.rsp
 agriconnect_backend.exe: CMakeFiles/agriconnect_backend.dir/objects1.rsp
 agriconnect_backend.exe: CMakeFiles/agriconnect_backend.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=C:\Users\Hermes\Desktop\Agriconnect\cpp-backend\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Linking CXX executable agriconnect_backend.exe"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=C:\Users\Hermes\Desktop\Agriconnect\cpp-backend\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Linking CXX executable agriconnect_backend.exe"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles\agriconnect_backend.dir\link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.

@@ -1,42 +1,40 @@
 #include "../external/httplib.h"
 #include "../external/json.hpp"
 #include "db/Database.h"
+#include "api/AuthMiddleware.h"
+#include "api/AuthRoutes.h"
+#include "api/ListingRoutes.h"
+#include "api/OrderRoutes.h"
 #include <iostream>
 #include <fstream>
-#include <sstream>
 #include <map>
 
 using json = nlohmann::json;
 
-// Simple .env file reader
 std::map<std::string, std::string> loadEnv(const std::string& path) {
     std::map<std::string, std::string> env;
     std::ifstream file(path);
     std::string line;
     while (std::getline(file, line)) {
         if (line.empty() || line[0] == '#') continue;
+        if (!line.empty() && line.back() == '\r') line.pop_back();
         auto pos = line.find('=');
         if (pos == std::string::npos) continue;
-        std::string key   = line.substr(0, pos);
-        std::string value = line.substr(pos + 1);
-        env[key] = value;
+        env[line.substr(0, pos)] = line.substr(pos + 1);
     }
     return env;
 }
 
 int main() {
-    // Load .env
     auto env = loadEnv("../.env");
 
-    // Build connection string
     std::string connStr =
-        "host="     + env["DB_HOST"]     +
-        " port="    + env["DB_PORT"]     +
-        " dbname="  + env["DB_NAME"]     +
-        " user="    + env["DB_USER"]     +
-        " password="+ env["DB_PASSWORD"];
+        "host="      + env["DB_HOST"]     +
+        " port="     + env["DB_PORT"]     +
+        " dbname="   + env["DB_NAME"]     +
+        " user="     + env["DB_USER"]     +
+        " password=" + env["DB_PASSWORD"];
 
-    // Connect to PostgreSQL
     try {
         Database::getInstance().connect(connStr);
     } catch (const std::exception& e) {
@@ -44,32 +42,22 @@ int main() {
         return 1;
     }
 
+    std::string jwtSecret = env.count("JWT_SECRET") ? env["JWT_SECRET"] : "changeme_secret";
+
     httplib::Server server;
 
     server.Get("/health", [](const httplib::Request&, httplib::Response& res) {
-        bool dbOk = Database::getInstance().isConnected();
-        json response = {
+        res.set_content(json{
             {"status",   "ok"},
-            {"message",  "Agriconnect backend running"},
-            {"database", dbOk ? "connected" : "disconnected"}
-        };
-        res.set_content(response.dump(), "application/json");
+            {"database", Database::getInstance().isConnected() ? "connected" : "disconnected"}
+        }.dump(), "application/json");
     });
 
-    server.Post("/analyze", [](const httplib::Request&, httplib::Response& res) {
-        json response = {
-            {"status",          "success"},
-            {"result",          "Healthy"},
-            {"confidence",      0.92},
-            {"recommendations", {
-                "Continue regular watering",
-                "Monitor leaf coloration"
-            }}
-        };
-        res.set_content(response.dump(), "application/json");
-    });
+    registerAuthRoutes(server, jwtSecret);
+    registerListingRoutes(server, jwtSecret);
+    registerOrderRoutes(server, jwtSecret);
 
-    std::cout << "Server running on port 5000\n";
+    std::cout << "Agriconnect backend running on port 5000\n";
     server.listen("0.0.0.0", 5000);
 
     Database::getInstance().disconnect();

@@ -1,1 +1,1 @@
--I"C:/Users/Hermes/Desktop/Agriconnect/cpp-backend/external" -IC:/msys64/mingw64/include/postgresql/server
+-I"C:/Users/Hermes/Desktop/Agriconnect/cpp-backend/external" -I"C:/Users/Hermes/Desktop/Agriconnect/cpp-backend/src" -IC:/msys64/mingw64/include/postgresql/server

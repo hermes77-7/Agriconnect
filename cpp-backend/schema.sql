@@ -98,3 +98,20 @@ CREATE INDEX idx_orders_wholesaler  ON orders(wholesaler_id);
 CREATE INDEX idx_transport_assigned ON transport_jobs(is_assigned);
 CREATE INDEX idx_transport_status   ON transport_jobs(status);
 CREATE INDEX idx_analyses_user      ON crop_analyses(user_id);
+
+-- Add category enum
+CREATE TYPE category_enum AS ENUM (
+    'Fruits', 'Vegetables', 'Grains', 'Legumes', 
+    'Tubers', 'Spices', 'Dairy', 'Other'
+);
+
+-- Add category and image_url to listings
+ALTER TABLE listings 
+    ADD COLUMN category category_enum DEFAULT 'Other',
+    ADD COLUMN image_url VARCHAR(500),
+    ADD COLUMN description TEXT,
+    ADD COLUMN region VARCHAR(255);
+
+ALTER TABLE orders RENAME COLUMN wholesaler_id TO buyer_id;
+
+ALTER TYPE order_status_enum ADD VALUE 'Cancelled';

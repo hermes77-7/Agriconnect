@@ -176,6 +176,54 @@ src/main.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\agriconnect_backend.dir\build.make CMakeFiles/agriconnect_backend.dir/src/main.cpp.s
 .PHONY : src/main.cpp.s
 
+src/utils/JwtUtil.obj: src/utils/JwtUtil.cpp.obj
+.PHONY : src/utils/JwtUtil.obj
+
+# target to build an object file
+src/utils/JwtUtil.cpp.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\agriconnect_backend.dir\build.make CMakeFiles/agriconnect_backend.dir/src/utils/JwtUtil.cpp.obj
+.PHONY : src/utils/JwtUtil.cpp.obj
+
+src/utils/JwtUtil.i: src/utils/JwtUtil.cpp.i
+.PHONY : src/utils/JwtUtil.i
+
+# target to preprocess a source file
+src/utils/JwtUtil.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\agriconnect_backend.dir\build.make CMakeFiles/agriconnect_backend.dir/src/utils/JwtUtil.cpp.i
+.PHONY : src/utils/JwtUtil.cpp.i
+
+src/utils/JwtUtil.s: src/utils/JwtUtil.cpp.s
+.PHONY : src/utils/JwtUtil.s
+
+# target to generate assembly for a file
+src/utils/JwtUtil.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\agriconnect_backend.dir\build.make CMakeFiles/agriconnect_backend.dir/src/utils/JwtUtil.cpp.s
+.PHONY : src/utils/JwtUtil.cpp.s
+
+src/utils/Password.obj: src/utils/Password.cpp.obj
+.PHONY : src/utils/Password.obj
+
+# target to build an object file
+src/utils/Password.cpp.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\agriconnect_backend.dir\build.make CMakeFiles/agriconnect_backend.dir/src/utils/Password.cpp.obj
+.PHONY : src/utils/Password.cpp.obj
+
+src/utils/Password.i: src/utils/Password.cpp.i
+.PHONY : src/utils/Password.i
+
+# target to preprocess a source file
+src/utils/Password.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\agriconnect_backend.dir\build.make CMakeFiles/agriconnect_backend.dir/src/utils/Password.cpp.i
+.PHONY : src/utils/Password.cpp.i
+
+src/utils/Password.s: src/utils/Password.cpp.s
+.PHONY : src/utils/Password.s
+
+# target to generate assembly for a file
+src/utils/Password.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\agriconnect_backend.dir\build.make CMakeFiles/agriconnect_backend.dir/src/utils/Password.cpp.s
+.PHONY : src/utils/Password.cpp.s
+
 # Help Target
 help:
 	@echo The following are some of the valid targets for this Makefile:
@@ -191,6 +239,12 @@ help:
 	@echo ... src/main.obj
 	@echo ... src/main.i
 	@echo ... src/main.s
+	@echo ... src/utils/JwtUtil.obj
+	@echo ... src/utils/JwtUtil.i
+	@echo ... src/utils/JwtUtil.s
+	@echo ... src/utils/Password.obj
+	@echo ... src/utils/Password.i
+	@echo ... src/utils/Password.s
 .PHONY : help
 
 

@@ -507,4 +507,12 @@ CMakeFiles/agriconnect_backend.dir/src/main.cpp.obj: \
  C:/msys64/mingw64/include/c++/16.1.0/any \
  C:\Users\Hermes\Desktop\Agriconnect\cpp-backend\src\db/Database.h \
  C:/msys64/mingw64/include/libpq-fe.h \
- C:/msys64/mingw64/include/postgres_ext.h
+ C:/msys64/mingw64/include/postgres_ext.h \
+ C:\Users\Hermes\Desktop\Agriconnect\cpp-backend\src\api/AuthMiddleware.h \
+ C:/Users/Hermes/Desktop/Agriconnect/cpp-backend/external/httplib.h \
+ C:/Users/Hermes/Desktop/Agriconnect/cpp-backend/external/json.hpp \
+ C:/Users/Hermes/Desktop/Agriconnect/cpp-backend/src/utils/JwtUtil.h \
+ C:\Users\Hermes\Desktop\Agriconnect\cpp-backend\src\api/AuthRoutes.h \
+ C:/Users/Hermes/Desktop/Agriconnect/cpp-backend/src/utils/Password.h \
+ C:\Users\Hermes\Desktop\Agriconnect\cpp-backend\src\api/ListingRoutes.h \
+ C:\Users\Hermes\Desktop\Agriconnect\cpp-backend\src\api/OrderRoutes.h
