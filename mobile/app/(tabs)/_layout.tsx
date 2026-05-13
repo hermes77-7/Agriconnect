@@ -1,13 +1,33 @@
 import { Tabs } from "expo-router";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
+import { View, StyleSheet } from "react-native";
+import { useEffect } from "react";
 import { COLORS } from "../../constants/colors";
+import { useAuthStore } from "../../store/useAuthStore";
+import { useOrderStore } from "../../store/useOrderStore";
+
+function RedDot() {
+  return <View style={styles.redDot} />;
+}
 
 export default function TabsLayout() {
+  const { user } = useAuthStore();
+  const { pendingCount, fetchPendingCount } = useOrderStore();
+  const isFarmer = user?.type === "FARMER";
+
+  useEffect(() => {
+    if (isFarmer) {
+      fetchPendingCount();
+      // Poll every 30 seconds
+      const interval = setInterval(fetchPendingCount, 30000);
+      return () => clearInterval(interval);
+    }
+  }, [isFarmer]);
+
   return (
     <Tabs
       screenOptions={{
         headerShown: false,
-
         tabBarStyle: {
           backgroundColor: COLORS.cream,
           borderTopColor: COLORS.border,
@@ -15,7 +35,6 @@ export default function TabsLayout() {
           paddingBottom: 10,
           paddingTop: 8,
         },
-
         tabBarActiveTintColor: COLORS.harvest,
         tabBarInactiveTintColor: COLORS.clay,
       }}
@@ -40,6 +59,19 @@ export default function TabsLayout() {
               size={size}
               color={color}
             />
+          ),
+        }}
+      />
+
+      <Tabs.Screen
+        name="orders"
+        options={{
+          title: "Orders",
+          tabBarIcon: ({ color, size }) => (
+            <View>
+              <Ionicons name="receipt-outline" size={size} color={color} />
+              {isFarmer && pendingCount > 0 && <RedDot />}
+            </View>
           ),
         }}
       />
@@ -70,3 +102,15 @@ export default function TabsLayout() {
     </Tabs>
   );
 }
+
+const styles = StyleSheet.create({
+  redDot: {
+    position: "absolute",
+    top: -2,
+    right: -4,
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: COLORS.harvest,
+  },
+});
