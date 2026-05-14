@@ -97,7 +97,7 @@ export default function MarketplaceScreen() {
           </View>
           <TouchableOpacity
             style={styles.profileButton}
-            onPress={() => router.push("/auth/login")}
+            onPress={() => router.push("/profile")}
           >
             <Ionicons name="person-outline" size={22} color={COLORS.soil} />
           </TouchableOpacity>

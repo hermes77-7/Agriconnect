@@ -14,6 +14,7 @@ import { COLORS } from "../../constants/colors";
 import { useAuthStore } from "../../store/useAuthStore";
 import { useOrderStore } from "../../store/useOrderStore";
 import { Order } from "../../types/produce";
+import { router } from "expo-router";
 
 type Tab = "incoming" | "my";
 
@@ -69,7 +70,6 @@ function OrderCard({
         </View>
       </View>
 
-      {/* Divider */}
       <View style={styles.cardDivider} />
 
       {/* Details row */}
@@ -92,7 +92,7 @@ function OrderCard({
         </View>
       </View>
 
-      {/* Action buttons */}
+      {/* 1. Incoming Pending Actions (Farmer only) */}
       {isIncoming && order.status === "Pending" && (
         <View style={styles.cardActions}>
           <TouchableOpacity style={styles.rejectBtn} onPress={onReject}>
@@ -104,14 +104,15 @@ function OrderCard({
         </View>
       )}
 
-      {/* Cancel — buyer or farmer on Pending/Accepted */}
+      {/* 2. INSERT YOUR SNIPPET HERE */}
+      {/* Cancel — only on active orders (Pending/Accepted) */}
       {(order.status === "Pending" || order.status === "Accepted") && (
         <TouchableOpacity style={styles.cancelBtn} onPress={onCancel}>
           <Text style={styles.cancelBtnText}>Cancel Order</Text>
         </TouchableOpacity>
       )}
 
-      {/* Complete — buyer anytime on Accepted, farmer sees it too */}
+      {/* Complete — only on Accepted */}
       {order.status === "Accepted" && (
         <TouchableOpacity style={styles.completeBtn} onPress={onComplete}>
           <Ionicons
@@ -195,22 +196,31 @@ export default function OrdersScreen() {
 
   const displayedOrders = activeTab === "incoming" ? incomingOrders : myOrders;
 
-  const pendingOrders = displayedOrders.filter(
-    (o) => o.status === "Pending" || o.status === "Accepted",
-  );
-  const historyOrders = displayedOrders.filter(
-    (o) =>
-      o.status === "Completed" ||
-      o.status === "Cancelled" ||
-      o.status === "Rejected",
-  );
+const pendingOrders = displayedOrders.filter(
+  (o) => o.status === "Pending" || o.status === "Accepted",
+);
+
+const historyOrders = displayedOrders.filter(
+  (o) =>
+    o.status === "Completed" ||
+    o.status === "Cancelled" ||
+    o.status === "Rejected",
+);
 
   return (
     <View style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
-        <Text style={styles.eyebrow}>MANAGE</Text>
-        <Text style={styles.title}>Orders</Text>
+        <View>
+          <Text style={styles.eyebrow}>MANAGE</Text>
+          <Text style={styles.title}>Orders</Text>
+        </View>
+        <TouchableOpacity
+          style={styles.profileButton}
+          onPress={() => router.push("/profile")}
+        >
+          <Ionicons name="person-outline" size={22} color={COLORS.soil} />
+        </TouchableOpacity>
       </View>
 
       {/* Farmer tabs: Incoming / My Orders */}
@@ -277,15 +287,21 @@ export default function OrdersScreen() {
               tintColor={COLORS.harvest}
             />
           }
-          ListHeaderComponent={
-            <>
-              {pendingOrders.length > 0 && (
-                <Text style={styles.sectionLabel}>Active</Text>
-              )}
-            </>
+          ListEmptyComponent={
+            <View style={styles.centered}>
+              <MaterialCommunityIcons
+                name="clipboard-text-outline"
+                size={48}
+                color={COLORS.border}
+              />
+              <Text style={styles.emptyText}>No orders yet</Text>
+            </View>
           }
           renderItem={({ item, index }) => (
             <>
+              {index === 0 && pendingOrders.length > 0 && (
+                <Text style={styles.sectionLabel}>Active</Text>
+              )}
               {index === pendingOrders.length && historyOrders.length > 0 && (
                 <Text style={styles.sectionLabel}>History</Text>
               )}
@@ -315,6 +331,8 @@ const styles = StyleSheet.create({
     backgroundColor: "#E9F3EC",
     borderBottomWidth: 1,
     borderBottomColor: COLORS.border,
+    flexDirection: "row",
+    justifyContent: "space-between"
   },
   eyebrow: {
     fontSize: 11,
@@ -454,6 +472,16 @@ const styles = StyleSheet.create({
     backgroundColor: "#FFEBEE",
   },
   cancelBtnText: { fontSize: 13, fontWeight: "600", color: "#C62828" },
+  profileButton: {
+    width: 44,
+    height: 44,
+    borderRadius: 14,
+    backgroundColor: COLORS.cream,
+    justifyContent: "center",
+    alignItems: "center",
+    borderWidth: 1,
+    borderColor: COLORS.border,
+  },
 
   completeBtn: {
     margin: 14,

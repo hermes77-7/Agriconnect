@@ -50,20 +50,6 @@ export default function TabsLayout() {
       />
 
       <Tabs.Screen
-        name="farmer"
-        options={{
-          title: "Farmer",
-          tabBarIcon: ({ color, size }) => (
-            <MaterialCommunityIcons
-              name="sprout-outline"
-              size={size}
-              color={color}
-            />
-          ),
-        }}
-      />
-
-      <Tabs.Screen
         name="orders"
         options={{
           title: "Orders",
@@ -96,6 +82,16 @@ export default function TabsLayout() {
           title: "Analysis",
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="scan-outline" size={size} color={color} />
+          ),
+        }}
+      />
+
+      <Tabs.Screen
+        name="education"
+        options={{
+          title: "Education",
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="book-outline" size={size} color={color} />
           ),
         }}
       />
