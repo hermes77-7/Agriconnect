@@ -8,6 +8,8 @@ Database& Database::getInstance() {
 }
 
 void Database::connect(const std::string& connStr) {
+    connectionString_ = connStr;
+    // Create one persistent connection just for health checks
     conn = PQconnectdb(connStr.c_str());
     if (PQstatus(conn) != CONNECTION_OK) {
         std::string err = PQerrorMessage(conn);
@@ -16,6 +18,16 @@ void Database::connect(const std::string& connStr) {
         throw std::runtime_error("DB connection failed: " + err);
     }
     std::cout << "PostgreSQL connected successfully\n";
+}
+
+PGconn* Database::newConnection() {
+    PGconn* c = PQconnectdb(connectionString_.c_str());
+    if (PQstatus(c) != CONNECTION_OK) {
+        std::string err = PQerrorMessage(c);
+        PQfinish(c);
+        throw std::runtime_error("DB connection failed: " + err);
+    }
+    return c;
 }
 
 bool Database::isConnected() {

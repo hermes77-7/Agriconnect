@@ -35,7 +35,8 @@ inline void registerAuthRoutes(httplib::Server& server, const std::string& jwtSe
                 return;
             }
 
-            PGconn* conn = Database::getInstance().getConnection();
+            ScopedConn scoped(Database::getInstance().getConnectionString());
+            PGconn* conn = scoped.get();
 
             // Check email uniqueness
             std::string checkSql = "SELECT id FROM users WHERE email = $1";
@@ -112,8 +113,8 @@ inline void registerAuthRoutes(httplib::Server& server, const std::string& jwtSe
                 return;
             }
 
-            PGconn* conn = Database::getInstance().getConnection();
-
+            ScopedConn scoped(Database::getInstance().getConnectionString());
+            PGconn* conn = scoped.get();
             std::string sql =
                 "SELECT id, name, password_hash, type FROM users WHERE email = $1 AND is_active = true";
             const char* params[1] = { email.c_str() };

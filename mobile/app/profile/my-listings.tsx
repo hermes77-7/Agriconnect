@@ -19,6 +19,8 @@ import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { COLORS } from "../../constants/colors";
 import { Listing, Category } from "../../types/produce";
 import { listingService } from "../../services/api/listingService";
+import { useFocusEffect } from "expo-router";
+import { useCallback } from "react";
 
 const CATEGORIES: Category[] = [
   "Fruits",
@@ -69,9 +71,11 @@ export default function MyListingsScreen() {
   const [form, setForm] = useState<ListingFormData>(EMPTY_FORM);
   const [saving, setSaving] = useState(false);
 
-  useEffect(() => {
-    loadListings();
-  }, []);
+  useFocusEffect(
+    useCallback(() => {
+      loadListings();
+    }, []),
+  );
 
   useEffect(() => {
     if (!search) {

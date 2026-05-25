@@ -35,4 +35,5 @@ target_link_libraries(agriconnect_backend PRIVATE
     ${PostgreSQL_LIBRARIES}
     ssl
     crypto
+    stdc++fs
 )

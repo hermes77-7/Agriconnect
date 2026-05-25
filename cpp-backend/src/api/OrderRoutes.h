@@ -26,7 +26,8 @@ inline void registerOrderRoutes(httplib::Server& server, const std::string& jwtS
                 return;
             }
 
-            PGconn* conn = Database::getInstance().getConnection();
+            ScopedConn scoped(Database::getInstance().getConnectionString());
+            PGconn* conn = scoped.get();
             std::string listingIdStr = std::to_string(listingId);
 
             // Fetch listing — no FOR UPDATE since we don't deduct yet
@@ -123,7 +124,8 @@ inline void registerOrderRoutes(httplib::Server& server, const std::string& jwtS
         if (!requireAuth(req, res, jwtSecret, payload)) return;
 
         try {
-            PGconn* conn = Database::getInstance().getConnection();
+            ScopedConn scoped(Database::getInstance().getConnectionString());
+            PGconn* conn = scoped.get();
             std::string buyerIdStr = std::to_string(payload.userId);
 
             std::string sql =
@@ -188,7 +190,8 @@ inline void registerOrderRoutes(httplib::Server& server, const std::string& jwtS
         }
 
         try {
-            PGconn* conn = Database::getInstance().getConnection();
+            ScopedConn scoped(Database::getInstance().getConnectionString());
+            PGconn* conn = scoped.get();
             std::string farmerIdStr = std::to_string(payload.userId);
 
             std::string sql =
@@ -251,7 +254,8 @@ inline void registerOrderRoutes(httplib::Server& server, const std::string& jwtS
         }
 
         try {
-            PGconn* conn = Database::getInstance().getConnection();
+            ScopedConn scoped(Database::getInstance().getConnectionString());
+            PGconn* conn = scoped.get();
             std::string farmerIdStr = std::to_string(payload.userId);
 
             std::string sql =
@@ -287,7 +291,8 @@ inline void registerOrderRoutes(httplib::Server& server, const std::string& jwtS
 
         try {
             std::string orderId = req.matches[1];
-            PGconn* conn = Database::getInstance().getConnection();
+            ScopedConn scoped(Database::getInstance().getConnectionString());
+            PGconn* conn = scoped.get();
 
             // Fetch order with listing info
             std::string fetchSql =
@@ -330,7 +335,6 @@ inline void registerOrderRoutes(httplib::Server& server, const std::string& jwtS
                 res.set_content(json{{"error", "Not enough quantity available. Available: " + std::to_string(availableQty) + " kg"}}.dump(), "application/json");
                 return;
             }
-
             PQexec(conn, "BEGIN");
 
             // Accept the order
@@ -393,7 +397,8 @@ inline void registerOrderRoutes(httplib::Server& server, const std::string& jwtS
 
         try {
             std::string orderId = req.matches[1];
-            PGconn* conn = Database::getInstance().getConnection();
+            ScopedConn scoped(Database::getInstance().getConnectionString());
+            PGconn* conn = scoped.get();
 
             std::string fetchSql =
                 "SELECT o.status, l.user_id as farmer_id "
@@ -453,7 +458,8 @@ inline void registerOrderRoutes(httplib::Server& server, const std::string& jwtS
 
         try {
             std::string orderId = req.matches[1];
-            PGconn* conn = Database::getInstance().getConnection();
+            ScopedConn scoped(Database::getInstance().getConnectionString());
+            PGconn* conn = scoped.get();
 
             std::string fetchSql =
                 "SELECT o.listing_id, o.buyer_id, o.quantity_ordered, o.status, "
@@ -553,7 +559,8 @@ inline void registerOrderRoutes(httplib::Server& server, const std::string& jwtS
 
         try {
             std::string orderId = req.matches[1];
-            PGconn* conn = Database::getInstance().getConnection();
+            ScopedConn scoped(Database::getInstance().getConnectionString());
+            PGconn* conn = scoped.get();
 
             std::string fetchSql =
                 "SELECT o.buyer_id, o.status, o.created_at, "
@@ -587,7 +594,7 @@ inline void registerOrderRoutes(httplib::Server& server, const std::string& jwtS
             }
 
             bool isBuyer  = payload.userId == buyerId;
-            bool isFarmer = payload.userId == farmerId;
+            bool isFarmer = (payload.userId == farmerId) && !isBuyer;
 
             if (!isBuyer && !isFarmer) {
                 res.status = 403;
@@ -595,24 +602,25 @@ inline void registerOrderRoutes(httplib::Server& server, const std::string& jwtS
                 return;
             }
 
-            // Farmer can only complete if 2+ days passed AND no transport job linked
-            if (isFarmer && !isBuyer) {
+            // Farmer restriction — only if they are the listing farmer, NOT the buyer
+            if (isFarmer) {
                 double twoDaysInSeconds = 2 * 24 * 60 * 60;
                 if (secondsSinceCreated < twoDaysInSeconds) {
                     res.status = 403;
                     res.set_content(json{{
-                        "error", "You can only mark this complete 2 days after acceptance if no transport has been requested"
+                        "error", "You can mark this complete 2 days after acceptance if no transport has been requested"
                     }}.dump(), "application/json");
                     return;
                 }
                 if (transportCount > 0) {
                     res.status = 403;
                     res.set_content(json{{
-                        "error", "A transport job is linked to this order. Completion is handled through transport."
+                        "error", "A transport job is linked to this order"
                     }}.dump(), "application/json");
                     return;
                 }
             }
+// Buyer can always complete an accepted order immediately
 
             std::string completeSql = "UPDATE orders SET status = 'Completed' WHERE id = $1";
             const char* completeParams[1] = { orderId.c_str() };

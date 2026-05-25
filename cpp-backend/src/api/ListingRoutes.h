@@ -14,7 +14,8 @@ inline void registerListingRoutes(httplib::Server& server, const std::string& jw
     // Public: browse all available listings with optional filters
     server.Get("/api/listings", [jwtSecret](const httplib::Request& req, httplib::Response& res) {
         try {
-            PGconn* conn = Database::getInstance().getConnection();
+            ScopedConn scoped(Database::getInstance().getConnectionString());
+            PGconn* conn = scoped.get();
 
             // Build dynamic query with filters
             std::string sql =
@@ -123,7 +124,8 @@ inline void registerListingRoutes(httplib::Server& server, const std::string& jw
     server.Get(R"(/api/listings/(\d+))", [jwtSecret](const httplib::Request& req, httplib::Response& res) {
         try {
             std::string listingId = req.matches[1];
-            PGconn* conn = Database::getInstance().getConnection();
+            ScopedConn scoped(Database::getInstance().getConnectionString());
+            PGconn* conn = scoped.get();
 
             std::string sql =
                 "SELECT l.id, l.crop_name, l.category, l.total_quantity, l.available_qty, "
@@ -221,7 +223,8 @@ server.Post("/api/listings", [jwtSecret](const httplib::Request& req, httplib::R
                 return;
             }
 
-            PGconn* conn = Database::getInstance().getConnection();
+            ScopedConn scoped(Database::getInstance().getConnectionString());
+            PGconn* conn = scoped.get();
             std::string userId = std::to_string(payload.userId);
             std::string totalQtyStr    = std::to_string(totalQty);
             std::string minOrderQtyStr = std::to_string(minOrderQty);
@@ -282,7 +285,8 @@ server.Post("/api/listings", [jwtSecret](const httplib::Request& req, httplib::R
         try {
             std::string listingId = req.matches[1];
             auto body = json::parse(req.body);
-            PGconn* conn = Database::getInstance().getConnection();
+            ScopedConn scoped(Database::getInstance().getConnectionString());
+            PGconn* conn = scoped.get();
 
             // Verify ownership
             std::string checkSql = "SELECT user_id FROM listings WHERE id = $1";
@@ -401,7 +405,8 @@ server.Post("/api/listings", [jwtSecret](const httplib::Request& req, httplib::R
 
         try {
             std::string listingId = req.matches[1];
-            PGconn* conn = Database::getInstance().getConnection();
+            ScopedConn scoped(Database::getInstance().getConnectionString());
+            PGconn* conn = scoped.get();
 
             // Verify ownership
             std::string checkSql = "SELECT user_id FROM listings WHERE id = $1";
@@ -472,7 +477,8 @@ server.Post("/api/listings", [jwtSecret](const httplib::Request& req, httplib::R
         }
 
         try {
-            PGconn* conn = Database::getInstance().getConnection();
+            ScopedConn scoped(Database::getInstance().getConnectionString());
+            PGconn* conn = scoped.get();
             std::string userId = std::to_string(payload.userId);
 
             std::string sql =

@@ -68,3 +68,51 @@ export interface Order {
     type: string;
   };
 }
+
+export type TransportStatus =
+  | "Pending"
+  | "In_Transit"
+  | "Delivered"
+  | "Cancelled";
+
+export interface TransportJob {
+  id: number;
+  pickupLocation: string;
+  destination: string;
+  cargoDesc: string;
+  transportDate: string;
+  estimatedWeight: number;
+  price: number;
+  specialInstructions: string;
+  status: TransportStatus;
+  createdAt: string;
+  cropName: string;
+  requestedBy: {
+    id: number;
+    name: string;
+    phone: string;
+  };
+}
+
+export interface TransportCheck {
+  exists: boolean;
+  id?: number;
+  status?: TransportStatus;
+  isAssigned?: boolean;
+  pickupLocation?: string;
+  destination?: string;
+  cargoDesc?: string;
+  transportDate?: string;
+  estimatedWeight?: number;
+  price?: number;
+}
+
+export interface CropAnalysis {
+  id: number;
+  cropName: string;
+  result: "Healthy" | "Diseased" | "Nutrient Deficiency";
+  confidence: number;
+  recommendations: string[];
+  imagePath: string;
+  analyzedAt: string;
+}

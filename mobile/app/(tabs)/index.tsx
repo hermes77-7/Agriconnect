@@ -241,7 +241,10 @@ export default function MarketplaceScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: COLORS.mist },
+  container: {
+    flex: 1, 
+    backgroundColor: COLORS.mist ,
+  },
   headerContainer: {
     backgroundColor: "#E9F3EC",
     paddingTop: 60,
@@ -267,7 +270,7 @@ const styles = StyleSheet.create({
   profileButton: {
     width: 44,
     height: 44,
-    borderRadius: 14,
+    borderRadius: 34,
     backgroundColor: COLORS.cream,
     justifyContent: "center",
     alignItems: "center",

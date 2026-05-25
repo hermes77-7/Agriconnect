@@ -7,6 +7,12 @@ import {
   ActivityIndicator,
   RefreshControl,
   Alert,
+  Modal,
+  KeyboardAvoidingView,
+  Platform,
+  TextInput,
+  ScrollView,
+  TouchableWithoutFeedback,
 } from "react-native";
 import { useEffect, useState } from "react";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
@@ -15,6 +21,10 @@ import { useAuthStore } from "../../store/useAuthStore";
 import { useOrderStore } from "../../store/useOrderStore";
 import { Order } from "../../types/produce";
 import { router } from "expo-router";
+import { useFocusEffect } from "expo-router";
+import { useCallback } from "react";
+import { TransportCheck } from "../../types/produce";
+import { transportService } from "../../services/api/transportService";
 
 type Tab = "incoming" | "my";
 
@@ -34,6 +44,8 @@ function OrderCard({
   onReject,
   onCancel,
   onComplete,
+  transportCheck,
+  onRequestTransport,
 }: {
   order: Order;
   isFarmer: boolean;
@@ -42,6 +54,8 @@ function OrderCard({
   onReject?: () => void;
   onCancel?: () => void;
   onComplete?: () => void;
+  transportCheck?: TransportCheck;
+  onRequestTransport?: () => void;
 }) {
   const statusStyle = STATUS_STYLES[order.status] ?? STATUS_STYLES.Pending;
 
@@ -106,7 +120,7 @@ function OrderCard({
 
       {/* 2. INSERT YOUR SNIPPET HERE */}
       {/* Cancel — only on active orders (Pending/Accepted) */}
-      {(order.status === "Pending" || order.status === "Accepted") && (
+      {order.status === "Accepted" && (
         <TouchableOpacity style={styles.cancelBtn} onPress={onCancel}>
           <Text style={styles.cancelBtnText}>Cancel Order</Text>
         </TouchableOpacity>
@@ -123,11 +137,45 @@ function OrderCard({
           <Text style={styles.completeBtnText}>Mark as Completed</Text>
         </TouchableOpacity>
       )}
+
+      {/* Request Transport — on accepted orders */}
+      {order.status === "Accepted" && (
+        <>
+          {transportCheck?.exists ? (
+            <View style={styles.transportStatusRow}>
+              <MaterialCommunityIcons
+                name="truck-outline"
+                size={14}
+                color={COLORS.moss}
+              />
+              <Text style={styles.transportStatusText}>
+                Transport:{" "}
+                {transportCheck.status === "In_Transit"
+                  ? "In Transit"
+                  : transportCheck.status}
+              </Text>
+            </View>
+          ) : (
+            <TouchableOpacity
+              style={styles.transportBtn}
+              onPress={onRequestTransport}
+            >
+              <MaterialCommunityIcons
+                name="truck-plus-outline"
+                size={15}
+                color={COLORS.white}
+              />
+              <Text style={styles.transportBtnText}>Request Transport</Text>
+            </TouchableOpacity>
+          )}
+        </>
+      )}
     </View>
   );
 }
 
 export default function OrdersScreen() {
+  const [transportStatus, setTransportStatus] = useState<Record<number, TransportCheck>>({}); 
   const { user } = useAuthStore();
   const {
     myOrders,
@@ -146,9 +194,25 @@ export default function OrdersScreen() {
   const isFarmer = user?.type === "FARMER";
   const [activeTab, setActiveTab] = useState<Tab>(isFarmer ? "incoming" : "my");
 
-  useEffect(() => {
-    loadData();
-  }, []);
+  useFocusEffect(
+    useCallback(() => {
+      loadData();
+    }, []),
+  );
+
+  const checkTransportStatuses = async (orders: Order[]) => {
+    const accepted = orders.filter((o) => o.status === "Accepted");
+    const results: Record<number, TransportCheck> = {};
+    await Promise.all(
+      accepted.map(async (o) => {
+        try {
+          const check = await transportService.checkOrderTransport(o.id);
+          results[o.id] = check;
+        } catch {}
+      }),
+    );
+    setTransportStatus(results);
+  };
 
   const loadData = async () => {
     if (isFarmer) {
@@ -156,6 +220,68 @@ export default function OrdersScreen() {
       await fetchPendingCount();
     }
     await fetchMyOrders();
+    // Check transport for accepted orders
+    const allOrders = [...myOrders, ...incomingOrders];
+    await checkTransportStatuses(allOrders);
+  };
+
+  const [transportModal, setTransportModal] = useState(false);
+  const [selectedOrderId, setSelectedOrderId] = useState<number | null>(null);
+  const [transportForm, setTransportForm] = useState({
+    pickupLocation: "",
+    destination: "",
+    estimatedWeight: "",
+    price: "",
+    transportDate: "",
+    specialInstructions: "",
+  });
+  const [submittingTransport, setSubmittingTransport] = useState(false);
+
+
+  const handleRequestTransport = async () => {
+    if (!selectedOrderId) return;
+    if (!transportForm.pickupLocation || !transportForm.destination) {
+      Alert.alert("Error", "Pickup location and destination are required");
+      return;
+    }
+
+    setSubmittingTransport(true);
+    try {
+      await transportService.createJob({
+        orderId: selectedOrderId,
+        pickupLocation: transportForm.pickupLocation,
+        destination: transportForm.destination,
+        estimatedWeight: transportForm.estimatedWeight
+          ? parseFloat(transportForm.estimatedWeight)
+          : undefined,
+        price: transportForm.price
+          ? parseFloat(transportForm.price)
+          : undefined,
+        transportDate: transportForm.transportDate || undefined,
+        specialInstructions: transportForm.specialInstructions || undefined,
+      });
+      setTransportModal(false);
+      setTransportForm({
+        pickupLocation: "",
+        destination: "",
+        estimatedWeight: "",
+        price: "",
+        transportDate: "",
+        specialInstructions: "",
+      });
+      await loadData();
+      Alert.alert(
+        "Success",
+        "Transport job posted. Transporters will be notified.",
+      );
+    } catch (err: any) {
+      Alert.alert(
+        "Error",
+        err.response?.data?.error || "Could not create transport job",
+      );
+    } finally {
+      setSubmittingTransport(false);
+    }
   };
 
   const handleAccept = (id: number) => {
@@ -189,7 +315,18 @@ export default function OrdersScreen() {
       "Confirm that this order has been fulfilled?",
       [
         { text: "Cancel", style: "cancel" },
-        { text: "Confirm", onPress: () => completeOrder(id) },
+        {
+          text: "Confirm",
+          onPress: async () => {
+            try {
+              await completeOrder(id);
+            } catch (err: any) {
+              const message =
+                err.response?.data?.error || "Could not complete this order";
+              Alert.alert("Cannot Complete Order", message);
+            }
+          },
+        },
       ],
     );
   };
@@ -309,15 +446,137 @@ const historyOrders = displayedOrders.filter(
                 order={item}
                 isFarmer={isFarmer}
                 isIncoming={activeTab === "incoming"}
+                transportCheck={transportStatus[item.id]}
                 onAccept={() => handleAccept(item.id)}
                 onReject={() => handleReject(item.id)}
                 onCancel={() => handleCancel(item.id)}
                 onComplete={() => handleComplete(item.id)}
+                onRequestTransport={() => {
+                  setSelectedOrderId(item.id);
+                  setTransportModal(true);
+                }}
               />
             </>
           )}
         />
       )}
+
+      {/* Transport Request Modal */}
+      <Modal visible={transportModal} animationType="slide" transparent>
+        <KeyboardAvoidingView
+          behavior={Platform.OS === "ios" ? "padding" : "height"}
+          style={styles.modalOverlay}
+        >
+          <TouchableWithoutFeedback onPress={() => setTransportModal(false)}>
+            <View style={StyleSheet.absoluteFill} />
+          </TouchableWithoutFeedback>
+          <View style={styles.modalSheet}>
+            <View style={styles.modalHeader}>
+              <Text style={styles.modalTitle}>Request Transport</Text>
+              <TouchableOpacity onPress={() => setTransportModal(false)}>
+                <Ionicons name="close" size={24} color={COLORS.soil} />
+              </TouchableOpacity>
+            </View>
+
+            <ScrollView showsVerticalScrollIndicator={false}>
+              <Text style={styles.modalFieldLabel}>Pickup Location *</Text>
+              <TextInput
+                style={styles.modalInput}
+                placeholder="Where to pick up the goods"
+                placeholderTextColor={COLORS.clay}
+                value={transportForm.pickupLocation}
+                onChangeText={(v) =>
+                  setTransportForm((p) => ({ ...p, pickupLocation: v }))
+                }
+              />
+
+              <Text style={styles.modalFieldLabel}>Destination *</Text>
+              <TextInput
+                style={styles.modalInput}
+                placeholder="Delivery destination"
+                placeholderTextColor={COLORS.clay}
+                value={transportForm.destination}
+                onChangeText={(v) =>
+                  setTransportForm((p) => ({ ...p, destination: v }))
+                }
+              />
+
+              <View style={styles.modalRow}>
+                <View style={{ flex: 1 }}>
+                  <Text style={styles.modalFieldLabel}>Weight (kg)</Text>
+                  <TextInput
+                    style={styles.modalInput}
+                    placeholder="e.g. 200"
+                    placeholderTextColor={COLORS.clay}
+                    value={transportForm.estimatedWeight}
+                    onChangeText={(v) =>
+                      setTransportForm((p) => ({ ...p, estimatedWeight: v }))
+                    }
+                    keyboardType="numeric"
+                  />
+                </View>
+                <View style={{ flex: 1 }}>
+                  <Text style={styles.modalFieldLabel}>Pay (CFA)</Text>
+                  <TextInput
+                    style={styles.modalInput}
+                    placeholder="e.g. 5000"
+                    placeholderTextColor={COLORS.clay}
+                    value={transportForm.price}
+                    onChangeText={(v) =>
+                      setTransportForm((p) => ({ ...p, price: v }))
+                    }
+                    keyboardType="numeric"
+                  />
+                </View>
+              </View>
+
+              <Text style={styles.modalFieldLabel}>Transport Date</Text>
+              <TextInput
+                style={styles.modalInput}
+                placeholder="YYYY-MM-DD"
+                placeholderTextColor={COLORS.clay}
+                value={transportForm.transportDate}
+                onChangeText={(v) =>
+                  setTransportForm((p) => ({ ...p, transportDate: v }))
+                }
+              />
+
+              <Text style={styles.modalFieldLabel}>Special Instructions</Text>
+              <TextInput
+                style={[
+                  styles.modalInput,
+                  { height: 70, textAlignVertical: "top" },
+                ]}
+                placeholder="Any special handling notes..."
+                placeholderTextColor={COLORS.clay}
+                value={transportForm.specialInstructions}
+                onChangeText={(v) =>
+                  setTransportForm((p) => ({ ...p, specialInstructions: v }))
+                }
+                multiline
+              />
+
+              <TouchableOpacity
+                style={[
+                  styles.modalConfirmBtn,
+                  submittingTransport && { opacity: 0.6 },
+                ]}
+                onPress={handleRequestTransport}
+                disabled={submittingTransport}
+              >
+                {submittingTransport ? (
+                  <ActivityIndicator color={COLORS.white} />
+                ) : (
+                  <Text style={styles.modalConfirmText}>
+                    Post Transport Job
+                  </Text>
+                )}
+              </TouchableOpacity>
+              <View style={{ height: 20 }} />
+            </ScrollView>
+          </View>
+        </KeyboardAvoidingView>
+      </Modal>
     </View>
   );
 }
@@ -332,7 +591,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: COLORS.border,
     flexDirection: "row",
-    justifyContent: "space-between"
+    justifyContent: "space-between",
   },
   eyebrow: {
     fontSize: 11,
@@ -446,36 +705,63 @@ const styles = StyleSheet.create({
   rejectBtn: {
     flex: 1,
     padding: 11,
-    borderRadius: 12,
+    borderRadius: 22,
     borderWidth: 1,
+    backgroundColor: "#ff0026",
     borderColor: COLORS.border,
     alignItems: "center",
   },
-  rejectBtnText: { fontSize: 13, fontWeight: "600", color: COLORS.clay },
+  rejectBtnText: { fontSize: 13, fontWeight: "600", color: COLORS.white },
   acceptBtn: {
     flex: 2,
     padding: 11,
-    borderRadius: 12,
-    backgroundColor: COLORS.moss,
+    borderRadius: 22,
+    backgroundColor: COLORS.mist,
+    borderColor: "#ff0019",
     alignItems: "center",
   },
-  acceptBtnText: { fontSize: 13, fontWeight: "600", color: COLORS.white },
+  acceptBtnText: { fontSize: 13, fontWeight: "600", color: COLORS.clay },
+
+  transportBtn: {
+    margin: 14,
+    marginTop: 0,
+    backgroundColor: COLORS.bark,
+    borderRadius: 12,
+    padding: 11,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 6,
+  },
+  transportBtnText: { fontSize: 13, fontWeight: "600", color: COLORS.white },
+  transportStatusRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
+    margin: 14,
+    marginTop: 0,
+    padding: 10,
+    backgroundColor: "#E8F5E9",
+    borderRadius: 12,
+    justifyContent: "center",
+  },
+  transportStatusText: { fontSize: 12, fontWeight: "600", color: COLORS.moss },
 
   cancelBtn: {
     margin: 14,
     marginTop: 0,
     padding: 11,
-    borderRadius: 12,
+    borderRadius: 22,
     borderWidth: 1,
-    borderColor: "#FFCDD2",
+    borderColor: "#ff0019",
     alignItems: "center",
-    backgroundColor: "#FFEBEE",
+    backgroundColor: "#ff0026",
   },
-  cancelBtnText: { fontSize: 13, fontWeight: "600", color: "#C62828" },
+  cancelBtnText: { fontSize: 13, fontWeight: "600", color: "#ffffff" },
   profileButton: {
     width: 44,
     height: 44,
-    borderRadius: 14,
+    borderRadius: 34,
     backgroundColor: COLORS.cream,
     justifyContent: "center",
     alignItems: "center",
@@ -487,12 +773,54 @@ const styles = StyleSheet.create({
     margin: 14,
     marginTop: 0,
     padding: 11,
-    borderRadius: 12,
-    backgroundColor: COLORS.moss,
+    borderRadius: 22,
+    backgroundColor: COLORS.mist,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
     gap: 6,
   },
-  completeBtnText: { fontSize: 13, fontWeight: "600", color: COLORS.white },
+  completeBtnText: { fontSize: 13, fontWeight: "600", color: COLORS.clay },
+
+  modalOverlay: { flex: 1, justifyContent: "flex-end" },
+  modalSheet: {
+    backgroundColor: COLORS.white,
+    borderTopLeftRadius: 24,
+    borderTopRightRadius: 24,
+    padding: 24,
+    maxHeight: "90%",
+    paddingBottom: Platform.OS === "ios" ? 50 : 36,
+  },
+  modalHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 20,
+  },
+  modalTitle: { fontSize: 20, fontWeight: "700", color: COLORS.soil },
+  modalFieldLabel: {
+    fontSize: 12,
+    fontWeight: "600",
+    color: COLORS.soil,
+    marginBottom: 6,
+  },
+  modalInput: {
+    backgroundColor: COLORS.mist,
+    borderRadius: 12,
+    padding: 12,
+    fontSize: 14,
+    color: COLORS.soil,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+    marginBottom: 14,
+  },
+  modalRow: { flexDirection: "row", gap: 10 },
+  modalConfirmBtn: {
+    backgroundColor: COLORS.harvest,
+    borderRadius: 14,
+    padding: 16,
+    alignItems: "center",
+    marginTop: 8,
+  },
+  modalConfirmText: { color: COLORS.white, fontSize: 15, fontWeight: "700" },
 });

@@ -115,3 +115,12 @@ ALTER TABLE listings
 ALTER TABLE orders RENAME COLUMN wholesaler_id TO buyer_id;
 
 ALTER TYPE order_status_enum ADD VALUE 'Cancelled';
+
+ALTER TABLE transport_jobs 
+    ADD COLUMN estimated_weight DOUBLE PRECISION,
+    ADD COLUMN price DOUBLE PRECISION,
+    ADD COLUMN special_instructions TEXT;
+
+ALTER TABLE crop_analyses
+    ADD COLUMN crop_name VARCHAR(255),
+    ADD COLUMN recommendations TEXT;

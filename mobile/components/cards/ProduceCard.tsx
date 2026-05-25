@@ -79,6 +79,7 @@ export default function ProduceCard({ item, onPress }: Props) {
 const styles = StyleSheet.create({
   card: {
     backgroundColor: COLORS.white,
+    borderTopLeftRadius: 0,
     borderRadius: 30,
     marginBottom: 12,
     flexDirection: "row",
@@ -96,7 +97,6 @@ const styles = StyleSheet.create({
   imageWrap: {
     width: 90,
     height: 110,
-    backgroundColor: COLORS.cream,
     justifyContent: "center",
     alignItems: "center",
   },
