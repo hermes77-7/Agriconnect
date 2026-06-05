@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import * as SecureStore from "expo-secure-store";
 
-export type UserType = "FARMER" | "WHOLESALER" | "TRANSPORTER";
+export type UserType = "FARMER" | "WHOLESALER" | "TRANSPORTER" | "ADMIN";
 
 export interface AuthUser {
   id: number;

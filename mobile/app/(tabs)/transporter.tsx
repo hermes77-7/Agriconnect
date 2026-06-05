@@ -178,7 +178,7 @@ export default function TransporterScreen() {
   );
 
   // Non-transporters see a locked screen
-  if (user?.type !== "TRANSPORTER") {
+  if (user?.type !== "TRANSPORTER" && user?.type !== "ADMIN") {
     return (
       <View style={styles.lockedContainer}>
         <MaterialCommunityIcons

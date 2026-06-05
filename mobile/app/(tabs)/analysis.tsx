@@ -147,12 +147,12 @@ export default function AnalysisScreen() {
 
   useFocusEffect(
     useCallback(() => {
-      if (user?.type === "FARMER") fetchHistory();
+      if (user?.type === "FARMER" || user?.type === "ADMIN") fetchHistory();
     }, [user]),
   );
 
   // Non-farmers see locked screen
-  if (user?.type !== "FARMER") {
+  if (user?.type !== "FARMER" && user?.type !== "ADMIN") {
     return (
       <View style={styles.lockedContainer}>
         <MaterialCommunityIcons

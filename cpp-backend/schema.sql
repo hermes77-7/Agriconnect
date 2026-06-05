@@ -80,10 +80,8 @@ CREATE TABLE crop_analyses (
 -- Education Articles
 CREATE TABLE education_articles (
     id         SERIAL PRIMARY KEY,
-    author_id  INTEGER REFERENCES users(id) ON DELETE SET NULL,  -- Admin who wrote it
     title      VARCHAR(255) NOT NULL,
     content    TEXT NOT NULL,
-    category   VARCHAR(100),   -- 'Soil', 'Pest Control', 'Irrigation', 'Post-Harvest'
     created_at TIMESTAMP DEFAULT NOW(),
     updated_at TIMESTAMP DEFAULT NOW()
 );
@@ -124,3 +122,24 @@ ALTER TABLE transport_jobs
 ALTER TABLE crop_analyses
     ADD COLUMN crop_name VARCHAR(255),
     ADD COLUMN recommendations TEXT;
+
+CREATE TYPE education_category_enum AS ENUM (
+    'Soil Preparation',
+    'Pest Control', 
+    'Irrigation',
+    'Post-Harvest',
+    'Crop Disease',
+    'Fertilization',
+    'Other'
+);
+
+ALTER TABLE education_articles
+    ADD COLUMN category education_category_enum DEFAULT 'Other',
+    ADD COLUMN cover_image VARCHAR(500),
+    ADD COLUMN sections JSONB,
+    ADD COLUMN author_id INTEGER REFERENCES users(id) ON DELETE SET NULL,
+    ADD COLUMN is_published BOOLEAN DEFAULT TRUE;
+
+-- Index for fast category filtering
+CREATE INDEX idx_education_category ON education_articles(category);
+CREATE INDEX idx_education_published ON education_articles(is_published);

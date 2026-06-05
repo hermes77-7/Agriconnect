@@ -10,6 +10,7 @@ import { router } from "expo-router";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { COLORS } from "../../constants/colors";
 import { useAuthStore } from "../../store/useAuthStore";
+import { userService } from "../../services/api/userService";
 
 interface MenuItemProps {
   icon: React.ReactNode;
@@ -127,9 +128,7 @@ export default function ProfileScreen() {
             }
             label="Edit Profile"
             sublabel="Update your name, phone and password"
-            onPress={() =>
-              Alert.alert("Coming Soon", "Edit profile will be available soon")
-            }
+            onPress={() => router.push("/profile/edit")}
           />
           <MenuItem
             icon={
@@ -181,12 +180,31 @@ export default function ProfileScreen() {
                 }
                 label="Become a Farmer"
                 sublabel="Start listing your own produce"
-                onPress={() =>
+                onPress={() => {
                   Alert.alert(
-                    "Coming Soon",
-                    "Role upgrade will be available soon",
-                  )
-                }
+                    "Become a Farmer",
+                    "This will change your account role to Farmer. You will be logged out and need to sign in again. Continue?",
+                    [
+                      { text: "Cancel", style: "cancel" },
+                      {
+                        text: "Confirm",
+                        onPress: async () => {
+                          try {
+                            await userService.upgradeRole("FARMER");
+                            await logout();
+                            router.replace("/auth/login");
+                          } catch (err: any) {
+                            Alert.alert(
+                              "Error",
+                              err.response?.data?.error ||
+                                "Could not upgrade role",
+                            );
+                          }
+                        },
+                      },
+                    ],
+                  );
+                }}
               />
               <MenuItem
                 icon={
@@ -198,12 +216,31 @@ export default function ProfileScreen() {
                 }
                 label="Become a Transporter"
                 sublabel="Offer delivery services"
-                onPress={() =>
+                onPress={() => {
                   Alert.alert(
-                    "Coming Soon",
-                    "Role upgrade will be available soon",
-                  )
-                }
+                    "Become a Transporter",
+                    "This will change your account role to Transporter. You will be logged out and need to sign in again. Continue?",
+                    [
+                      { text: "Cancel", style: "cancel" },
+                      {
+                        text: "Confirm",
+                        onPress: async () => {
+                          try {
+                            await userService.upgradeRole("TRANSPORTER");
+                            await logout();
+                            router.replace("/auth/login");
+                          } catch (err: any) {
+                            Alert.alert(
+                              "Error",
+                              err.response?.data?.error ||
+                                "Could not upgrade role",
+                            );
+                          }
+                        },
+                      },
+                    ],
+                  );
+                }}
               />
             </View>
           </>
@@ -224,12 +261,7 @@ export default function ProfileScreen() {
                 }
                 label="Delivery History"
                 sublabel="View your completed deliveries"
-                onPress={() =>
-                  Alert.alert(
-                    "Coming Soon",
-                    "Delivery history will be available in Sprint 4",
-                  )
-                }
+                onPress={() => router.push("/profile/delivery-history")}
               />
             </View>
           </>
@@ -336,7 +368,7 @@ const styles = StyleSheet.create({
     gap: 14,
     borderBottomWidth: 1,
     borderBottomColor: COLORS.ghost,
-  },
+  },  
   menuIcon: {
     width: 40,
     height: 40,

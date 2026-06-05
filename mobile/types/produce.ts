@@ -116,3 +116,31 @@ export interface CropAnalysis {
   imagePath: string;
   analyzedAt: string;
 }
+
+export type EducationCategory =
+  | "Soil Preparation"
+  | "Pest Control"
+  | "Irrigation"
+  | "Post-Harvest"
+  | "Crop Disease"
+  | "Fertilization"
+  | "Other";
+
+export interface ArticleSection {
+  heading: string;
+  body: string;
+}
+
+export interface EducationArticle {
+  id: number;
+  title: string;
+  category: EducationCategory;
+  coverImage: string;
+  sections: ArticleSection[];
+  createdAt: string;
+  updatedAt: string;
+  author: {
+    id: number;
+    name: string;
+  };
+}

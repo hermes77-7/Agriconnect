@@ -519,4 +519,6 @@ CMakeFiles/agriconnect_backend.dir/src/main.cpp.obj: \
  C:/Users/Hermes/Desktop/Agriconnect/cpp-backend/src/analysis/AnalysisEngine.h \
  C:/msys64/mingw64/include/c++/16.1.0/chrono \
  C:\Users\Hermes\Desktop\Agriconnect\cpp-backend\src\api/OrderRoutes.h \
- C:\Users\Hermes\Desktop\Agriconnect\cpp-backend\src\api/TransportRoutes.h
+ C:\Users\Hermes\Desktop\Agriconnect\cpp-backend\src\api/TransportRoutes.h \
+ C:\Users\Hermes\Desktop\Agriconnect\cpp-backend\src\api/EducationRoutes.h \
+ C:\Users\Hermes\Desktop\Agriconnect\cpp-backend\src\api/UserRoutes.h

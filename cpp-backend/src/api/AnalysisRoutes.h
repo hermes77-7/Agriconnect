@@ -35,7 +35,7 @@ inline void registerAnalysisRoutes(httplib::Server& server,
         JwtPayload payload;
         if (!requireAuth(req, res, jwtSecret, payload)) return;
 
-        if (payload.userType != "FARMER") {
+        if (payload.userType != "FARMER" && payload.userType != "ADMIN") {
             res.status = 403;
             res.set_content(json{{"error", "Only farmers can submit crop analyses"}}.dump(), "application/json");
             return;
@@ -164,7 +164,7 @@ inline void registerAnalysisRoutes(httplib::Server& server,
         JwtPayload payload;
         if (!requireAuth(req, res, jwtSecret, payload)) return;
 
-        if (payload.userType != "FARMER") {
+        if (payload.userType != "FARMER" && payload.userType != "ADMIN") {
             res.status = 403;
             res.set_content(json{{"error", "Farmers only"}}.dump(), "application/json");
             return;
@@ -279,7 +279,7 @@ server.Delete("/api/analysis", [jwtSecret](const httplib::Request& req, httplib:
     JwtPayload payload;
     if (!requireAuth(req, res, jwtSecret, payload)) return;
 
-    if (payload.userType != "FARMER") {
+    if (payload.userType != "FARMER" && payload.userType != "ADMIN") {
         res.status = 403;
         res.set_content(json{{"error", "Farmers only"}}.dump(), "application/json");
         return;

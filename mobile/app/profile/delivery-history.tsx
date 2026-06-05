@@ -6,7 +6,6 @@ import {
   TextInput,
   TouchableOpacity,
   ActivityIndicator,
-  ScrollView,
   RefreshControl,
 } from "react-native";
 import { useState, useCallback } from "react";
@@ -15,20 +14,11 @@ import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { COLORS } from "../../constants/colors";
 import { userService } from "../../services/api/userService";
 
-const STATUS_STYLES: Record<string, { color: string; bg: string }> = {
-  Completed: { color: "#1565C0", bg: "#E3F2FD" },
-  Cancelled: { color: "#757575", bg: "#F3F3F3" },
-  Rejected: { color: "#C62828", bg: "#FFEBEE" },
-};
-
-const STATUS_FILTERS = ["All", "Completed", "Cancelled", "Rejected"];
-
-export default function OrderHistoryScreen() {
-  const [orders, setOrders] = useState<any[]>([]);
+export default function DeliveryHistoryScreen() {
+  const [jobs, setJobs] = useState<any[]>([]);
   const [filtered, setFiltered] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [search, setSearch] = useState("");
-  const [activeFilter, setActiveFilter] = useState("All");
 
   useFocusEffect(
     useCallback(() => {
@@ -39,78 +29,87 @@ export default function OrderHistoryScreen() {
   const loadHistory = async () => {
     setIsLoading(true);
     try {
-      const data = await userService.getOrderHistory();
-      setOrders(data);
-      applyFilters(data, search, activeFilter);
+      const data = await userService.getDeliveryHistory();
+      setJobs(data);
+      setFiltered(data);
     } finally {
       setIsLoading(false);
     }
   };
 
-  const applyFilters = (data: any[], searchText: string, status: string) => {
-    let result = data;
-    if (status !== "All") {
-      result = result.filter((o) => o.status === status);
-    }
-    if (searchText) {
-      const lower = searchText.toLowerCase();
-      result = result.filter(
-        (o) =>
-          o.listing?.cropName?.toLowerCase().includes(lower) ||
-          o.farmer?.name?.toLowerCase().includes(lower) ||
-          o.listing?.region?.toLowerCase().includes(lower),
-      );
-    }
-    setFiltered(result);
-  };
-
   const handleSearch = (text: string) => {
     setSearch(text);
-    applyFilters(orders, text, activeFilter);
+    if (!text) {
+      setFiltered(jobs);
+      return;
+    }
+    const lower = text.toLowerCase();
+    setFiltered(
+      jobs.filter(
+        (j) =>
+          j.cropName?.toLowerCase().includes(lower) ||
+          j.pickupLocation?.toLowerCase().includes(lower) ||
+          j.destination?.toLowerCase().includes(lower) ||
+          j.requestedBy?.name?.toLowerCase().includes(lower),
+      ),
+    );
   };
 
-  const handleFilter = (status: string) => {
-    setActiveFilter(status);
-    applyFilters(orders, search, status);
-  };
+  const totalEarned = filtered.reduce((sum, j) => sum + (j.price ?? 0), 0);
 
   const renderItem = ({ item, index }: { item: any; index: number }) => {
-    const style = STATUS_STYLES[item.status] ?? STATUS_STYLES.Completed;
     const isLast = index === filtered.length - 1;
-
     return (
       <View style={[styles.row, !isLast && styles.rowBorder]}>
-        {/* Left icon */}
-        <View style={[styles.rowIcon, { backgroundColor: style.bg }]}>
-          <MaterialCommunityIcons name="sprout" size={18} color={style.color} />
+        <View style={styles.rowIcon}>
+          <MaterialCommunityIcons
+            name="truck-check"
+            size={18}
+            color={COLORS.moss}
+          />
         </View>
-
-        {/* Content */}
         <View style={styles.rowContent}>
           <View style={styles.rowTopLine}>
             <Text style={styles.rowCrop} numberOfLines={1}>
-              {item.listing?.cropName}
+              {item.cropName || "Transport Job"}
             </Text>
-            <View style={[styles.statusPill, { backgroundColor: style.bg }]}>
-              <Text style={[styles.statusPillText, { color: style.color }]}>
-                {item.status}
-              </Text>
-            </View>
-          </View>
-          <Text style={styles.rowFarmer}>
-            {item.farmer?.name} · {item.listing?.region}
-          </Text>
-          <View style={styles.rowStats}>
-            <Text style={styles.rowStat}>{item.quantityOrdered} kg</Text>
-            <Text style={styles.rowStatDot}>·</Text>
-            <Text style={styles.rowStat}>
-              {item.totalPrice?.toLocaleString()} CFA
-            </Text>
-            <Text style={styles.rowStatDot}>·</Text>
             <Text style={styles.rowDate}>
               {new Date(item.createdAt).toLocaleDateString()}
             </Text>
           </View>
+          <View style={styles.routeRow}>
+            <Ionicons name="location-outline" size={11} color={COLORS.clay} />
+            <Text style={styles.routeText} numberOfLines={1}>
+              {item.pickupLocation}
+            </Text>
+            <Ionicons name="arrow-forward" size={11} color={COLORS.clay} />
+            <Text style={styles.routeText} numberOfLines={1}>
+              {item.destination}
+            </Text>
+          </View>
+          <View style={styles.rowStats}>
+            {item.estimatedWeight > 0 && (
+              <Text style={styles.rowStat}>{item.estimatedWeight} kg</Text>
+            )}
+            {item.price > 0 && (
+              <>
+                <Text style={styles.rowStatDot}>·</Text>
+                <Text
+                  style={[
+                    styles.rowStat,
+                    { color: COLORS.moss, fontWeight: "700" },
+                  ]}
+                >
+                  {item.price.toLocaleString()} CFA
+                </Text>
+              </>
+            )}
+            <Text style={styles.rowStatDot}>·</Text>
+            <Text style={styles.rowStat}>{item.requestedBy?.name}</Text>
+          </View>
+        </View>
+        <View style={styles.deliveredBadge}>
+          <Ionicons name="checkmark-circle" size={18} color="#2E7D32" />
         </View>
       </View>
     );
@@ -123,16 +122,33 @@ export default function OrderHistoryScreen() {
         <TouchableOpacity style={styles.backBtn} onPress={() => router.back()}>
           <Ionicons name="arrow-back" size={22} color={COLORS.soil} />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Order History</Text>
+        <Text style={styles.headerTitle}>Delivery History</Text>
         <View style={{ width: 40 }} />
       </View>
+
+      {/* Earnings summary */}
+      {filtered.length > 0 && (
+        <View style={styles.summaryBar}>
+          <View style={styles.summaryStat}>
+            <Text style={styles.summaryNum}>{filtered.length}</Text>
+            <Text style={styles.summaryLabel}>Deliveries</Text>
+          </View>
+          <View style={styles.summaryDivider} />
+          <View style={styles.summaryStat}>
+            <Text style={[styles.summaryNum, { color: COLORS.moss }]}>
+              {totalEarned.toLocaleString()}
+            </Text>
+            <Text style={styles.summaryLabel}>CFA Earned</Text>
+          </View>
+        </View>
+      )}
 
       {/* Search */}
       <View style={styles.searchWrap}>
         <Ionicons name="search-outline" size={17} color={COLORS.clay} />
         <TextInput
           style={styles.searchInput}
-          placeholder="Search by crop, farmer, region..."
+          placeholder="Search deliveries..."
           placeholderTextColor={COLORS.clay}
           value={search}
           onChangeText={handleSearch}
@@ -144,47 +160,16 @@ export default function OrderHistoryScreen() {
         )}
       </View>
 
-      {/* Status filter chips */}
-      <ScrollView
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        contentContainerStyle={styles.chips}
-      >
-        {STATUS_FILTERS.map((s) => (
-          <TouchableOpacity
-            key={s}
-            style={[styles.chip, activeFilter === s && styles.chipActive]}
-            onPress={() => handleFilter(s)}
-          >
-            <Text
-              style={[
-                styles.chipText,
-                activeFilter === s && styles.chipTextActive,
-              ]}
-            >
-              {s}
-            </Text>
-          </TouchableOpacity>
-        ))}
-      </ScrollView>
-
-      {/* Stats */}
-      <View style={styles.statsBar}>
-        <Text style={styles.statsText}>
-          {filtered.length} order{filtered.length !== 1 ? "s" : ""}
-        </Text>
-      </View>
-
       {isLoading ? (
         <View style={styles.centered}>
           <ActivityIndicator size="large" color={COLORS.harvest} />
         </View>
       ) : filtered.length === 0 ? (
         <View style={styles.centered}>
-          <Text style={styles.emptyEmoji}>📋</Text>
-          <Text style={styles.emptyTitle}>No orders found</Text>
+          <Text style={styles.emptyEmoji}>🚚</Text>
+          <Text style={styles.emptyTitle}>No deliveries yet</Text>
           <Text style={styles.emptyText}>
-            Completed, cancelled and rejected orders appear here
+            Completed deliveries will appear here
           </Text>
         </View>
       ) : (
@@ -232,6 +217,22 @@ const styles = StyleSheet.create({
   },
   headerTitle: { fontSize: 16, fontWeight: "700", color: COLORS.soil },
 
+  summaryBar: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: COLORS.white,
+    marginHorizontal: 16,
+    marginTop: 16,
+    borderRadius: 16,
+    padding: 16,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+  },
+  summaryStat: { flex: 1, alignItems: "center" },
+  summaryNum: { fontSize: 22, fontWeight: "700", color: COLORS.soil },
+  summaryLabel: { fontSize: 11, color: COLORS.clay, marginTop: 2 },
+  summaryDivider: { width: 1, height: 32, backgroundColor: COLORS.border },
+
   searchWrap: {
     flexDirection: "row",
     alignItems: "center",
@@ -246,22 +247,6 @@ const styles = StyleSheet.create({
     borderColor: COLORS.border,
   },
   searchInput: { flex: 1, fontSize: 14, color: COLORS.soil },
-
-  chips: { gap: 8, paddingHorizontal: 16, paddingBottom: 10 },
-  chip: {
-    paddingHorizontal: 16,
-    paddingVertical: 7,
-    borderRadius: 20,
-    borderWidth: 1,
-    borderColor: COLORS.border,
-    backgroundColor: COLORS.white,
-  },
-  chipActive: { backgroundColor: COLORS.soil, borderColor: COLORS.soil },
-  chipText: { fontSize: 12, fontWeight: "500", color: COLORS.clay },
-  chipTextActive: { color: COLORS.sun },
-
-  statsBar: { paddingHorizontal: 20, paddingBottom: 6 },
-  statsText: { fontSize: 11, color: COLORS.clay, fontWeight: "500" },
 
   list: { paddingBottom: 100 },
   centered: {
@@ -293,6 +278,7 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 12,
+    backgroundColor: "#E8F5E9",
     justifyContent: "center",
     alignItems: "center",
     flexShrink: 0,
@@ -304,16 +290,11 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   rowCrop: { fontSize: 14, fontWeight: "700", color: COLORS.soil, flex: 1 },
-  statusPill: {
-    borderRadius: 8,
-    paddingHorizontal: 8,
-    paddingVertical: 3,
-    marginLeft: 8,
-  },
-  statusPillText: { fontSize: 10, fontWeight: "700" },
-  rowFarmer: { fontSize: 12, color: COLORS.clay },
-  rowStats: { flexDirection: "row", alignItems: "center", gap: 4 },
-  rowStat: { fontSize: 12, color: COLORS.soil, fontWeight: "500" },
-  rowStatDot: { fontSize: 12, color: COLORS.clay },
   rowDate: { fontSize: 11, color: COLORS.clay },
+  routeRow: { flexDirection: "row", alignItems: "center", gap: 4 },
+  routeText: { fontSize: 12, color: COLORS.clay, flex: 1 },
+  rowStats: { flexDirection: "row", alignItems: "center", gap: 4 },
+  rowStat: { fontSize: 12, color: COLORS.soil },
+  rowStatDot: { fontSize: 12, color: COLORS.clay },
+  deliveredBadge: { flexShrink: 0 },
 });

@@ -11,6 +11,8 @@
 #include <fstream>
 #include <map>
 #include "api/TransportRoutes.h"
+#include "api/EducationRoutes.h"
+#include "api/UserRoutes.h"
 
 using json = nlohmann::json;
 
@@ -65,6 +67,8 @@ int main() {
     registerOrderRoutes(server, jwtSecret);
     registerTransportRoutes(server, jwtSecret);
     registerAnalysisRoutes(server, jwtSecret, uploadDir);
+    registerEducationRoutes(server, jwtSecret);
+    registerUserRoutes(server, jwtSecret);
 
     std::cout << "Agriconnect backend running on port 5000\n";
     server.listen("0.0.0.0", 5000);

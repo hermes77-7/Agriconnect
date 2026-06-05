@@ -159,7 +159,7 @@ inline void registerTransportRoutes(httplib::Server& server, const std::string& 
         JwtPayload payload;
         if (!requireAuth(req, res, jwtSecret, payload)) return;
 
-        if (payload.userType != "TRANSPORTER") {
+        if (payload.userType != "TRANSPORTER" && payload.userType != "ADMIN") {
             res.status = 403;
             res.set_content(json{{"error", "Transporters only"}}.dump(), "application/json");
             return;
@@ -230,7 +230,7 @@ inline void registerTransportRoutes(httplib::Server& server, const std::string& 
         JwtPayload payload;
         if (!requireAuth(req, res, jwtSecret, payload)) return;
 
-        if (payload.userType != "TRANSPORTER") {
+        if (payload.userType != "TRANSPORTER" && payload.userType != "ADMIN") {
             res.status = 403;
             res.set_content(json{{"error", "Transporters only"}}.dump(), "application/json");
             return;
@@ -302,7 +302,7 @@ inline void registerTransportRoutes(httplib::Server& server, const std::string& 
         JwtPayload payload;
         if (!requireAuth(req, res, jwtSecret, payload)) return;
 
-        if (payload.userType != "TRANSPORTER") {
+        if (payload.userType != "TRANSPORTER" && payload.userType != "ADMIN") {
             res.status = 403;
             res.set_content(json{{"error", "Transporters only"}}.dump(), "application/json");
             return;
@@ -379,7 +379,7 @@ inline void registerTransportRoutes(httplib::Server& server, const std::string& 
         JwtPayload payload;
         if (!requireAuth(req, res, jwtSecret, payload)) return;
 
-        if (payload.userType != "TRANSPORTER") {
+        if (payload.userType != "TRANSPORTER" && payload.userType != "ADMIN") {
             res.status = 403;
             res.set_content(json{{"error", "Transporters only"}}.dump(), "application/json");
             return;
